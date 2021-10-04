@@ -1,0 +1,31 @@
+.section-heading {
+  background-color: #f1f1f1;
+  padding: 25px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+}
+.darsk-section{
+    background-color: #000000;
+    color: #ffffff;
+}
+.section-logo-container {
+  height: 55px;
+  width: 55px;
+  background-color: #e2e8f0;
+  border-radius: 28px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dark-logo-container {
+  background-color: #212121;
+}
+.section-logo {
+  font-size: 27px;
+  color: #ff0b37;
+}
+.section-title {
+  margin: 0;
+}

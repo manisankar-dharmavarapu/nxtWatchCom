@@ -1,0 +1,32 @@
+.channel-view-item {
+  color: #94a3b8;
+  font-size: 19px;
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+.link-styles {
+  text-decoration: none;
+  color: inherit;
+}
+@media screen and (max-width: 768px) {
+  .trending-title {
+    font-size: 14px;
+    margin: 0;
+  }
+  .channel-view-item {
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 1024px) {
+  .trending-title {
+    margin: 0;
+  }
+}
+@media screen and (max-width: 1024px) {
+  .trending-title {
+    font-size: 16px;
+  }
+  .channel-view-item {
+    font-size: 16px;
+  }
+}

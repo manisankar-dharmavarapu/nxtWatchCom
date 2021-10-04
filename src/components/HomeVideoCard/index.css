@@ -1,0 +1,39 @@
+.video-title-container{
+    display: flex;
+    justify-content: unset;
+    align-items: flex-start;
+}
+.video-content{
+    padding: 15px;
+}
+.video-channelImg{
+   width: 38px;
+   margin-right: 13px; 
+}
+.view-container{
+    padding-left: 50px;
+  color: #94a3b8;
+}
+.dark-theme-title{
+    color: #ffffff;
+}
+.video-title{
+    margin: 0;
+    line-height: 21px;
+}
+.video-channelname{
+    line-height: 1px;
+}
+.view-published{
+    display: flex;
+    align-items: center;
+}
+.dot-icon{
+    font-size: 10px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+.link-styles{
+    text-decoration: none;
+    color: inherit;
+}

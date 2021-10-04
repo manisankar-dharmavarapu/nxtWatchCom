@@ -1,0 +1,8 @@
+.sidmenu-container {
+  display: block;
+}
+@media screen and (max-width: 767px) {
+  .sidmenu-container {
+    display: none;
+  }
+}
