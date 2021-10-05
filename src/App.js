@@ -8,15 +8,19 @@ import Gaming from "./components/Gaming"
 import SavedVideos from "./components/SavedVideos"
 import LoginForm from "./components/LoginForm"
 import VideoDetails from "./components/VideoDetails"
-import ThemeContext from "./context/ThemeContext"
-import VideoContext from "./context/VideoContext"
 import NotFound from './components/NotFound'
 import ProtectedRoute from "./components/ProtectedRoute"
+import ThemeContext from "./context/ThemeContext"
+import VideoContext from "./context/VideoContext"
+import LikedVideos from "./context/LikedVideos"
+import DisLikedVideos from "./context/DisLikedVideos"
 
 class App extends Component {
   state = {
     isDarkTheme: false,
     savedVideos: [],
+    likedVideos: [],
+    disLikedVideos: [],
   }
 
   toggleTheme = () => {
@@ -27,46 +31,100 @@ class App extends Component {
     const { savedVideos } = this.state
     this.setState({ savedVideos: [...savedVideos, video] })
   }
-// this.setState({videos:{...this.state.videos,savedVideos:[...this.state.videos.savedVideos]}})
+  // this.setState({videos:{...this.state.videos,savedVideos:[...this.state.videos.savedVideos]}})
 
   onRemoveSavedVideo = (id) => {
     const { savedVideos } = this.state
     const filteredVideos = savedVideos.filter((video) => video.id !== id)
-    this.setState({savedVideos:filteredVideos})
+    this.setState({ savedVideos: filteredVideos })
+  }
+
+  onLikeVideo = (video) => {
+    const { likedVideos } = this.state
+    this.setState({ likedVideos: [...likedVideos, video] })
+  }
+
+  onRemoveLike = (id) => {
+    const { likedVideos } = this.state
+    const filteredVideos = likedVideos.filter((video) => video.id !== id)
+    this.setState({ likedVideos: filteredVideos })
+  }
+
+  onDisLikeVideo = (video) => {
+    const { disLikedVideos } = this.state
+    this.setState({ disLikedVideos: [...disLikedVideos, video] })
+  }
+
+  onRemoveDisLike = (id) => {
+    const { disLikedVideos } = this.state
+    const filteredVideos = disLikedVideos.filter((video) => video.id !== id)
+    this.setState({ disLikedVideos: filteredVideos })
   }
 
   render() {
-    const { isDarkTheme, savedVideos } = this.state
+    const { isDarkTheme, savedVideos, likedVideos, disLikedVideos } = this.state
     return (
-      <VideoContext.Provider
+      <DisLikedVideos.Provider
         value={{
-          savedVideos: savedVideos,
-          onSaveVideo: this.onSaveVideo,
-          onRemoveSavedVideo: this.onRemoveSavedVideo,
+          disLikedVideos: disLikedVideos,
+          onDisLikeVideo: this.onDisLikeVideo,
+          onRemoveDisLike: this.onRemoveDisLike,
         }}
       >
-        <ThemeContext.Provider
+        <LikedVideos.Provider
           value={{
-            isDarkTheme,
-            toggleTheme: this.toggleTheme,
+            likedVideos: likedVideos,
+            onLikeVideo: this.onLikeVideo,
+            onRemoveLike: this.onRemoveLike,
           }}
         >
-          <Switch>
-            <Route exact path="/login" component={LoginForm} />
-            <Layout>
+          <VideoContext.Provider
+            value={{
+              savedVideos: savedVideos,
+              onSaveVideo: this.onSaveVideo,
+              onRemoveSavedVideo: this.onRemoveSavedVideo,
+            }}
+          >
+            <ThemeContext.Provider
+              value={{
+                isDarkTheme,
+                toggleTheme: this.toggleTheme,
+              }}
+            >
               <Switch>
-              <ProtectedRoute exact path="/" component={Home} />
-              <ProtectedRoute exact path="/trending" component={Trending} />
-              <ProtectedRoute exact path="/gaming" component={Gaming} />
-              <ProtectedRoute exact path="/savedvideos" component={SavedVideos} />
-              <ProtectedRoute exact path="/videos/:id" component={VideoDetails} />
-              <ProtectedRoute exact path="/not-found" component={NotFound}/>
-              <Redirect to="/not-found"/>
+                <Route exact path="/login" component={LoginForm} />
+                <Layout>
+                  <Switch>
+                    <ProtectedRoute exact path="/" component={Home} />
+                    <ProtectedRoute
+                      exact
+                      path="/trending"
+                      component={Trending}
+                    />
+                    <ProtectedRoute exact path="/gaming" component={Gaming} />
+                    <ProtectedRoute
+                      exact
+                      path="/savedvideos"
+                      component={SavedVideos}
+                    />
+                    <ProtectedRoute
+                      exact
+                      path="/videos/:id"
+                      component={VideoDetails}
+                    />
+                    <ProtectedRoute
+                      exact
+                      path="/not-found"
+                      component={NotFound}
+                    />
+                    <Redirect to="/not-found" />
+                  </Switch>
+                </Layout>
               </Switch>
-            </Layout>
-          </Switch>
-        </ThemeContext.Provider>
-      </VideoContext.Provider>
+            </ThemeContext.Provider>
+          </VideoContext.Provider>
+        </LikedVideos.Provider>
+      </DisLikedVideos.Provider>
     )
   }
 }

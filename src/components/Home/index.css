@@ -56,6 +56,13 @@
   height: 84vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.failure-styles{
+  height: 84vh;
+  display: flex;
+  flex-direction: column;
   /* justify-content: center; */
   align-items: center;
 }

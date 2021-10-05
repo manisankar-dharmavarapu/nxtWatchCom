@@ -86,7 +86,7 @@ export default class Home extends Component {
         const { isDarkTheme } = value
         const failureImg = isDarkTheme ? darkFailureView : lightFailureView
         return (
-          <div className="loader-styles">
+          <div className="failure-styles">
             <img className="failure-img" src={failureImg} alt="failure view" />
             <h2 className="failure-title">Oops! Something Went Wrong</h2>
             <p>We cannot seem to find the page you are looking for</p>

@@ -8,7 +8,9 @@ import { Button, Container, Grid } from "@mui/material"
 import ReactPlayer from "react-player"
 import ThemeContext from "../../context/ThemeContext"
 import VideoContext from "../../context/VideoContext"
-import TrendingVideoCard from '../TrendingVideoCard'
+import TrendingVideoCard from "../TrendingVideoCard"
+import LikedVideos from "../../context/LikedVideos"
+import DisLikedVideos from "../../context/DisLikedVideos"
 import "./index.css"
 
 const apiStatusConstants = {
@@ -26,7 +28,7 @@ const darkFailureView =
 export default class VideoDetails extends Component {
   state = {
     videoDetails: [],
-    similarVideos:[],
+    similarVideos: [],
     apiStatus: apiStatusConstants.initial,
   }
 
@@ -75,7 +77,7 @@ export default class VideoDetails extends Component {
       }))
       this.setState({
         videoDetails: updatedData,
-        similarVideos:similarVideosData,
+        similarVideos: similarVideosData,
         apiStatus: apiStatusConstants.success,
       })
     } else if (response.status === 400) {
@@ -84,128 +86,197 @@ export default class VideoDetails extends Component {
   }
 
   renderVideosView = () => (
-    <ThemeContext.Consumer>
-      {(value) => {
-        const { isDarkTheme } = value
-        const reactionBtn = isDarkTheme
-          ? "dark-reaction-item reaction-item"
-          : "reaction-item"
-          const {similarVideos}=this.state
+    <DisLikedVideos.Consumer>
+      {(disLiked) => {
+        const { disLikedVideos, onDisLikeVideo, onRemoveDisLike } = disLiked
         return (
-          <VideoContext.Consumer>
-            {(videoStatus) => {
-              const { videoDetails, isDark } = this.state
-              const {
-                channelName,
-                channelProfileUrl,
-                channelSubscribersCount,
-                description,
-                id,
-                publishedAt,
-                thumbnailUrl,
-                title,
-                videoUrl,
-                viewCount,
-              } = videoDetails
-              const {
-                savedVideos,
-                onSaveVideo,
-                onRemoveSavedVideo,
-              } = videoStatus
-              const isSaved = savedVideos.find((video) => video.id === id)
-
-              const onSaveVideoClicked = () => {
-                if (isSaved) {
-                  onRemoveSavedVideo(id)
-                } else {
-                  onSaveVideo(videoDetails)
-                }
-              }
-              const saveVideoStyle = isDarkTheme
-                ? isSaved
-                  ? "reaction-item active-btn"
-                  : "dark-reaction-item reaction-item"
-                : isSaved
-                ? "reaction-item active-btn"
-                : "reaction-item"
-              //  isSaved
-              //   ? "reaction-item active-btn"
-              //   : "reaction-item"
+          <LikedVideos.Consumer>
+            {(liked) => {
+              const { likedVideos, onLikeVideo, onRemoveLike } = liked
 
               return (
-                <Grid container spacing={2} className="video-main-container">
-                  <Grid item xs={12} md={12} lg={12}>
-                    <ReactPlayer
-                      className="videoFrame"
-                      width="100%"
-                      height={screen.width === 1440 ? "490px" : "360px"}
-                      url={videoUrl}
-                      light={thumbnailUrl}
-                      playing
-                      controls
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={12} lg={12}>
-                    <p>{title}</p>
-                    <div className="view-reaction-conatainer">
-                      <p className="view-published">
-                        {`${viewCount}View`}
-                        <span className="dot-icon">
-                          <GoPrimitiveDot />
-                        </span>
-                        {publishedAt}
-                      </p>
-                      <div className="reaction-conatainer">
-                        <button className={reactionBtn}>
-                          <AiOutlineLike />
-                          Like
-                        </button>
-                        <button className={reactionBtn}>
-                          <AiOutlineDislike />
-                          Dislike
-                        </button>
-                        <button
-                          className={saveVideoStyle}
-                          onClick={onSaveVideoClicked}
-                        >
-                          <MdPlaylistAdd />
-                          Save Video
-                        </button>
-                      </div>
-                    </div>
-                    <hr />
-                    <div className="chanel-details">
-                      <img
-                        className="chanel-logo"
-                        src={channelProfileUrl}
-                        alt="channel image"
-                      />
-                      <div className="chanel">
-                        <p className="sub-count">{channelName}</p>
-                        <p>{channelSubscribersCount}</p>
-                      </div>
-                    </div>
-                    <p className="chanel-description">{description}</p>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <h3>Similar Videos</h3>
-                  </Grid>
-                  {similarVideos.length === 0
-                    ? this.noVideosView()
-                    : similarVideos.map((video) => (
-                        <TrendingVideoCard key={video.id} video={video} />
-                      ))}
-                </Grid>
+                <ThemeContext.Consumer>
+                  {(value) => {
+                    const { isDarkTheme } = value
+                    const { similarVideos } = this.state
+
+                    return (
+                      <VideoContext.Consumer>
+                        {(videoStatus) => {
+                          const { videoDetails } = this.state
+                          const {
+                            channelName,
+                            channelProfileUrl,
+                            channelSubscribersCount,
+                            description,
+                            id,
+                            publishedAt,
+                            thumbnailUrl,
+                            title,
+                            videoUrl,
+                            viewCount,
+                          } = videoDetails
+                          const {
+                            savedVideos,
+                            onSaveVideo,
+                            onRemoveSavedVideo,
+                          } = videoStatus
+
+                          const isSaved = savedVideos.find(
+                            (video) => video.id === id
+                          )
+                          const isLiked = likedVideos.find(
+                            (video) => video.id === id
+                          )
+                          const isDisLiked = disLikedVideos.find(
+                            (video) => video.id === id
+                          )
+
+                          const onSaveVideoClicked = () => {
+                            if (isSaved) {
+                              onRemoveSavedVideo(id)
+                            } else {
+                              onSaveVideo(videoDetails)
+                            }
+                          }
+
+                          const onLikedVideo = () => {
+                            if (isLiked) {
+                              onRemoveLike(id)
+                            } else {
+                              onRemoveDisLike(id)
+                              onLikeVideo(videoDetails)
+                            }
+                          }
+
+                          const onDisLikedVideo = () => {
+                            if (isDisLiked) {
+                              onRemoveDisLike(id)
+                            } else {
+                              onRemoveLike(id)
+                              onDisLikeVideo(videoDetails)
+                            }
+                          }
+
+                          const saveVideoStyle = isDarkTheme
+                            ? isSaved
+                              ? "reaction-item active-btn"
+                              : "dark-reaction-item reaction-item"
+                            : isSaved
+                            ? "reaction-item active-btn"
+                            : "reaction-item"
+                          const likedStyles = isDarkTheme
+                            ? isLiked
+                              ? "reaction-item active-btn"
+                              : "dark-reaction-item reaction-item"
+                            : isLiked
+                            ? "reaction-item active-btn"
+                            : "reaction-item"
+                          const disLikedStyles = isDarkTheme
+                            ? isDisLiked
+                              ? "reaction-item active-btn"
+                              : "dark-reaction-item reaction-item"
+                            : isDisLiked
+                            ? "reaction-item active-btn"
+                            : "reaction-item"
+
+                          return (
+                            <Grid
+                              container
+                              spacing={2}
+                              className="video-main-container"
+                            >
+                              <Grid item xs={12} md={12} lg={12}>
+                                <ReactPlayer
+                                  className="videoFrame"
+                                  width="100%"
+                                  height={
+                                    screen.width === 1440 ? "490px" : "360px"
+                                  }
+                                  url={videoUrl}
+                                  light={thumbnailUrl}
+                                  playing
+                                  controls
+                                />
+                              </Grid>
+                              <Grid item xs={12} md={12} lg={12}>
+                                <p>{title}</p>
+                                <div className="view-reaction-conatainer">
+                                  <p className="view-published">
+                                    {`${viewCount}View`}
+                                    <span className="dot-icon">
+                                      <GoPrimitiveDot />
+                                    </span>
+                                    {publishedAt}
+                                  </p>
+                                  <div className="reaction-conatainer">
+                                    <button
+                                      className={likedStyles}
+                                      onClick={onLikedVideo}
+                                    >
+                                      <AiOutlineLike />
+                                      Like
+                                    </button>
+                                    <button
+                                      className={disLikedStyles}
+                                      onClick={onDisLikedVideo}
+                                    >
+                                      <AiOutlineDislike />
+                                      Dislike
+                                    </button>
+                                    <button
+                                      className={saveVideoStyle}
+                                      onClick={onSaveVideoClicked}
+                                    >
+                                      <MdPlaylistAdd />
+                                      Save Video
+                                    </button>
+                                  </div>
+                                </div>
+                                <hr />
+                                <div className="chanel-details">
+                                  <img
+                                    className="chanel-logo"
+                                    src={channelProfileUrl}
+                                    alt="channel image"
+                                  />
+                                  <div className="chanel">
+                                    <p className="sub-count">{channelName}</p>
+                                    <p>{channelSubscribersCount}</p>
+                                  </div>
+                                </div>
+                                <p className="chanel-description">
+                                  {description}
+                                </p>
+                              </Grid>
+                              <Grid item xs={12}>
+                                <h3>Similar Videos</h3>
+                              </Grid>
+                              {similarVideos.length === 0
+                                ? this.noVideosView()
+                                : similarVideos.map((video) => (
+                                    <TrendingVideoCard
+                                      key={video.id}
+                                      video={video}
+                                    />
+                                  ))}
+                            </Grid>
+                          )
+                        }}
+                      </VideoContext.Consumer>
+                    )
+                  }}
+                </ThemeContext.Consumer>
               )
             }}
-          </VideoContext.Consumer>
+          </LikedVideos.Consumer>
         )
       }}
-    </ThemeContext.Consumer>
+    </DisLikedVideos.Consumer>
   )
 
   renderLoadingView = () => (
-    <div className="loader-styles">
+    <div className="loader-styles" style={{ height: "90vh" }}>
       <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
     </div>
   )
@@ -216,7 +287,7 @@ export default class VideoDetails extends Component {
         const { isDarkTheme } = value
         const failureImg = isDarkTheme ? darkFailureView : lightFailureView
         return (
-          <div className="loader-styles">
+          <div className="failure-styles">
             <img className="failure-img" src={failureImg} alt="failure view" />
             <h2 className="failure-title">Oops! Something Went Wrong</h2>
             <p>We cannot seem to find the page you are looking for</p>
